@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-4 mt-4 product">
+    <img src="{{ product.image.url }}">
+</div>
+<div class="col-8 mt-4">
+    <p class="col">{{ product.name }}</p>
+    <p class="col">{{ product.description }}</p>
+    <p class="col">{{ product.price }}</p>
+    {% url 'cart:update' as action_url %}
+    {% if in_cart %}
+    {% include 'snippets/add_remove_product_form.html' with action_url=action_url slug=product.slug next='0' in_cart=in_cart %}
+    {% else %}
+    {% include 'snippets/add_remove_product_form.html' with action_url=action_url slug=product.slug next='0' in_cart=in_cart %}
+    {% endif %}
+</div>
+{% endblock %}

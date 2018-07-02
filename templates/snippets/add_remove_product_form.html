@@ -1,0 +1,13 @@
+<form method="POST" action="{{ action_url }}" data-endpoint="{{ action_url }}" class="addRemoveProduct" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="slug" value="{{ slug }}">
+    <input type="hidden" name="next" value="{{ next }}">
+    <span class="submit-span">
+    {% if in_cart %}
+        <button type="submit" class="btn btn-link">Remove form Cart</button>
+    {% else %}
+        <button type="submit" class="btn btn-success">Add to Cart</button>
+    {% endif %}
+    </span>
+</form>
+

@@ -1,0 +1,19 @@
+<form method="POST" action="{% url 'address:checkout' %}" novalidate>
+    {% csrf_token %}
+    {% if next %}
+    <input type="hidden" name="next" value="request.build_absolute_uri">
+    {% endif %}
+    {% if address_type %}
+    <input type="hidden" name="address_type" value="{{ address_type }}">
+    {% endif %}
+    {% for f in form %}
+    <div class="form-group">
+        {{ f.label_tag }}
+        {{ f }}
+        {% if f.errors %}
+        {{ f.errors }}
+        {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-success mr-3">Checkout</button>
+</form>

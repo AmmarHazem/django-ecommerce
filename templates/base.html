@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}E-Commerce{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'style/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'style/font-awsome-5/css/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+    {% block style %}
+    <link rel="stylesheet" href="{% static 'style/style.css' %}">
+    {% endblock %}
+</head>
+<body>
+    <!-- start navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">E-Commerce</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a href="{% url 'product:list' %}" class="nav-link">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'search:product' %}" class="nav-link">Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'cart:home' %}" class="nav-link"><span id="n">{% if request.session.n > 0 %}{{ request.session.n }}{% endif %}</span><i class="fas fa-shopping-cart fa-fw mx-1"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'contact:contact' %}" class="nav-link">Contact us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'markting:prefrence' %}" class="nav-link">Markting Prefrence</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                {% if user.is_authenticated %}
+                <span class="navbar-text active mr-3">
+                    {{ user.get_short_name|default:user }}
+                </span>
+                {% include 'form.html' %}
+                {% else %}
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a href="{% url 'login' %}" class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:signup' %}" class="nav-link">Signup</a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- end navbar -->
+
+
+    <main role="main" class="container text-center">
+        <div class="row d-flex justify-content-center py-5">
+            {% block content %}
+                <div class="starter-template">
+                    <h1>My E-Commerce Website</h1>
+                    <p class="lead">This awesome website is my first E-Commerce website and it's going to be awesome and I'm going to make a lots of mony.</p>
+                </div>
+            {% endblock %}
+        </div>
+    </main>
+
+        {% include 'scripts.html' %}
+</body>
+</html>

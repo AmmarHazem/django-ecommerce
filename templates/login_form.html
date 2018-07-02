@@ -1,0 +1,19 @@
+<form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+    {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
+    {% if form.errors %}
+    <p class="text-danger">Your Username and Password didn't match. Please try agian</p>
+    {% endif %}
+    <div class="form-group">
+        <label for="id_username" class="sr-only">Username:</label>
+        {{ form.username }}
+    </div>
+    <div class="form-group">
+        <label for="id_password" class="sr-only">Password:</label>
+        {{ form.password }}
+    </div>
+    <button type="submit" class="btn btn-success mr-3">Login</button>
+    <a href="{% url 'password_reset' %}">Lost password</a>
+</form>

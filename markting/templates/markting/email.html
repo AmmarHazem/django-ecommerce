@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if messages %}
+    <div class="col-8 mx-auto">
+        <div class="alert alert-success messages">
+            {% for message in messages %}
+            <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                {{ message }}
+            </span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <form method="POST" action="{% if action %}{{ action }}{% endif %}">
+            {% csrf_token %}
+            {% if next %}
+            <input type="hidden" name="next" value="request.build_absolute_uri">
+            {% endif %}
+            {% for f in form %}
+            <div class="form-group">
+                {{ f.label_tag }}
+                {{ f }}
+                {% if f.errors %}
+                {{ f.errors }}
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-success mr-3">Save</button>
+        </form>
+    </div>
+{% endblock %}

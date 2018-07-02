@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'billing/snippets/stripe_form.html' with publish_key=pub_key %}
+{% endblock %}

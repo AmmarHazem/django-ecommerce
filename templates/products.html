@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if request.GET.q %}
+    <p class="col-sm-12">Search results for <strong>{{ request.GET.q}}</strong></p>
+    {% endif %}
+    <div class="col-12">
+        <form method="POST" action="{% url 'cart:add-all' %}" class="addAll" novalidate>
+            <button type="submit" class="btn btn-outline-primary mt-4 w-25">Add All</button>
+            {% csrf_token %}
+        </form>
+    </div>
+    {% for p in products %}
+        {% include 'card.html' with obj=p %}
+    {% endfor %}
+{% endblock %}

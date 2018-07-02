@@ -1,0 +1,18 @@
+<form method="POST" action="{% url 'address:address-reuse' %}" novalidate>
+    {% csrf_token %}
+    {% if next %}
+        <input type="hidden" name="next" value="{{ request.build_absolute_uri }}">
+    {% endif %}
+    {% if address_type %}
+        <input type="hidden" name="address_type" value="{{ address_type }}">
+    {% endif %}
+    <input type="hidden" name="order_id" value="{{ order_id }}">
+    {% for a in addresses %}
+            <label for="address-{{ a.id }}">
+                <input type="radio" name="shipping_address" value="{{ a.id }}">
+                {{ a.address_line1 }}
+            </label>
+            <br>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Use Address</button>
+</form>

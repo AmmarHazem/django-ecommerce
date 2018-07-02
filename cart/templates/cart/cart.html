@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Your Cart</h1>
+<table class="table cart-table">
+    {% if products %}
+    <tr>
+        <th>#</th>
+        <th>Item</th>
+        <th>Price</th>
+        <th></th>
+    </tr>
+    <tbody class="cart-body">
+            {% for p in products %}
+            <tr class="cart-products">
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{{ p.get_absolute_url }}">{{ p.name }}</a></td>
+                <td>{{ p.price }}</td>
+                <td>{% url 'cart:update' as action_url %}
+                    {% include 'snippets/add_remove_product_form.html' with action_url=action_url slug=p.slug next='1' in_cart='True'%}</td>
+            </tr>
+            {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td><p>Shipping : {{ shipping }}</p><p>Total : <span class="cart-total">{{ total }}</span></p></td>
+            <td><a href="{% url 'cart:checkout' %}" class="btn btn-success">Checkout</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">Your cart is empty. Add some <a href="{% url 'product:list' %}">Products</a></td></tr>
+        {% endif %}
+    </tbody>
+</table>
+<div style="display: none" id="addRemoveProduct">
+    <form method="POST" action="/cart/update/" data-endpoint="/cart/update/" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="slug" value="" class="slug">
+        <input type="hidden" name="next" value="1">
+        <span class="submit-span">
+            <button type="submit" class="btn btn-link">Remove form Cart</button>
+        </span>
+    </form>
+</div>
+{% endblock %}
