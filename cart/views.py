@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, View
 from django.conf import settings
-from .models import Cart, Guest
+from .models import Cart
+from accounts.models import Guest
 from orders.models import Order
 from product.models import Product
-from ECommerce.forms import GuestForm
+from accounts.forms import GuestForm
 from accounts.forms import LoginForm
 from billing.models import BillingProfile
 from address.forms import AddressForm
@@ -138,17 +139,6 @@ class Checkout(View):
                 return render(request, 'success.html')
             else:
                 print('did_charge: {}'.format(did_charge))
-
-
-class Guest(View):
-    def post(self, request):
-        form  = GuestForm(request.POST)
-        if form.is_valid():
-            form.save()
-            request.session['user_email'] = form.cleaned_data['email']
-            return redirect('cart:checkout')
-        login_form = LoginForm()
-        return render(request, 'checkout.html', {'guest_form' : form, 'login_form' : login_form})
 
 
 class CheckoutSuccess(View):

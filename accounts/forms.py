@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth import get_user_model
+from .models import Guest
 
 
 User = get_user_model()
@@ -53,3 +54,9 @@ class UserAdminChangeForm(forms.ModelForm):
 class LoginForm(forms.Form):
     username = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder' : 'Email'}))
     password = forms.CharField(widget = forms.PasswordInput(attrs={'class': 'form-control', 'placeholder' : 'Password'}))
+
+
+class GuestForm(forms.ModelForm):
+    class Meta:
+        model = Guest
+        fields = ('email',)

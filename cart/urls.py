@@ -13,5 +13,4 @@ urlpatterns = [
     url(r'^api/$', CartRefresh.as_view(), name = 'api'),
     url(r'^checkout/$', Checkout.as_view(), name = 'checkout'),
     url(r'^checkout/success$', CheckoutSuccess.as_view(), name = 'success'),
-    url(r'^guest/$', Guest.as_view(), name = 'guest'),
 ]

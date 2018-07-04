@@ -1,6 +1,6 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, m2m_changed
-from .models import Cart, Guest
+from .models import Cart
 from orders.models import Order
 from billing.models import BillingProfile
 
@@ -29,6 +29,3 @@ def cart_total(sender, instance, action, **kwargs):
         instance.save()
 
 
-@receiver(post_save, sender = Guest)
-def save_cart(sender, instance, created, **kwargs):
-    BillingProfile.objects.create(email = instance.email)

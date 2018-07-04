@@ -56,11 +56,5 @@ class Cart(models.Model):
             return str(self.user.email)
         return str(self.id)
 
-class Guest(models.Model):
-    email = models.EmailField()
-    active = models.BooleanField(default = True)
-    created = models.DateTimeField(auto_now_add = True)
 
-    def __str__(self):
-        return self.email
 

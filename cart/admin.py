@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cart, Guest
+from .models import Cart
 
 
 class CartAdmin(admin.ModelAdmin):
@@ -8,4 +8,3 @@ class CartAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Cart, CartAdmin)
-admin.site.register(Guest)

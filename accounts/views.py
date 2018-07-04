@@ -42,3 +42,14 @@ class Login(View):
                 user_logged_in.send(user.__class__, instance = user, request = request)
                 return redirect('home')
         return render(request, 'registration/login.html', {'form' : form})
+
+
+class Guest(View):
+    def post(self, request):
+        form  = GuestForm(request.POST)
+        if form.is_valid():
+            form.save()
+            request.session['user_email'] = form.cleaned_data['email']
+            return redirect('cart:checkout')
+        login_form = LoginForm()
+        return render(request, 'checkout.html', {'guest_form' : form, 'login_form' : login_form})
