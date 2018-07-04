@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from ECommerce.forms import SignUpForm
 from django.contrib.auth import login, authenticate
 from django.views.generic import View
 
-from .forms import LoginForm
+from ECommerce.forms import SignUpForm
+from .forms import LoginForm, GuestForm
 from .signals import user_logged_in
 
 
