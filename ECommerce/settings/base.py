@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'accounts',
     'analytics',
     'markting',
+    # 3rd parties
+    'storages',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

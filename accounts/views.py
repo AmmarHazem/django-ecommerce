@@ -41,5 +41,4 @@ class Login(View):
                 login(request, user)
                 user_logged_in.send(user.__class__, instance = user, request = request)
                 return redirect('home')
-        print('HHHHHHHHHHHHHHHHHH')
         return render(request, 'registration/login.html', {'form' : form})
