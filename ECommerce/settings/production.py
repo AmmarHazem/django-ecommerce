@@ -177,3 +177,6 @@ SECURE_HSTS_SECONDS             = 1000000
 SECURE_FRAME_DENY               = True
 
 from ECommerce.aws.conf import *
+
+
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')

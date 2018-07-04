@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+ADMINS = [('Ammar', 'ammar.hazem@hotmail.com')]
+MANAGERS = ADMINS
+
 
 # Application definition
 
@@ -158,3 +161,13 @@ STRIPE_API_KEY = 'sk_test_hL3k70HLspNvoyq8HqTSpGPC'
 MAILCHIMP_API_KEY           = '8c52da3b7bf6dea07d10d91c5fb2f400-us18'
 MAILCHIMP_DATA_CENTER       = 'us18'
 MAILCHIMP_EMAIL_LIST_ID     = '2d46e0117d'
+
+
+# gmail email
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'ammar.hazem0@gmail.com' 
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'eCommerce: %s' % EMAIL_HOST_USER
