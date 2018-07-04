@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -20,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '3lc^8jhq&v#=fi01gm78b)1ex_ntb$00!p3d0ry1_q)*a13n@+'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -155,12 +156,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # stripe credentials
-PUB_KEY = 'pk_test_VXDkskRFeTYvKtSLl5dNMmkf'
-STRIPE_API_KEY = 'sk_test_hL3k70HLspNvoyq8HqTSpGPC'
+PUB_KEY = config('PUB_KEY')
+STRIPE_API_KEY = config('STRIPE_API_KEY')
 
 
 # mailchimp credentials
-MAILCHIMP_API_KEY           = '8c52da3b7bf6dea07d10d91c5fb2f400-us18'
+MAILCHIMP_API_KEY           = config('MAILCHIMP_API_KEY')
 MAILCHIMP_DATA_CENTER       = 'us18'
 MAILCHIMP_EMAIL_LIST_ID     = '2d46e0117d'
 
