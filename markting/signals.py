@@ -8,10 +8,10 @@ from .utils import Mailchimp
 User = settings.AUTH_USER_MODEL
 
 
-@receiver(post_save, sender = User)
-def post_save_user(sender, instance, created, *args, **kwargs):
-    if created:
-        MarktingPrefrence.objects.create(user = instance)
+# @receiver(post_save, sender = User)
+# def post_save_user(sender, instance, created, *args, **kwargs):
+#     if created:
+#         MarktingPrefrence.objects.create(user = instance)
 
 
 @receiver(post_save, sender = MarktingPrefrence)

@@ -1,0 +1,6 @@
+{% for f in form %}
+    <div class="form-group">
+        {{ f }} 
+        {% if f.errors %}{{ f.errors }}{% endif %}
+    </div>
+{% endfor %}

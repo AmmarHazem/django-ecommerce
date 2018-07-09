@@ -1,11 +1,27 @@
 from django.db import models
+from django.urls import reverse
 from cart.models import Cart
 from decimal import Decimal
 from billing.models import BillingProfile
 from address.models import Address
 
 
+class OrderQuerySet(models.query.QuerySet):
+    def by_request(self, request):
+        bp, created = BillingProfile.objects.new_or_get(request)
+        return self.filter(billing_profile = bp)
+
+    def not_created(self):
+        return self.exclude(status = 'created')
+
+
 class OrderManager(models.Manager):
+    def get_queryset(self):
+        return OrderQuerySet(self.model, using = self._db)
+
+    def by_request(self, request):
+        return self.get_queryset().by_request(request)
+
     def new_or_get(self, bp, cart):
         created = False
         order_qs = self.model.objects.filter(billing_profile = bp)
@@ -34,11 +50,25 @@ class Order(models.Model):
     shipping_total = models.DecimalField(default = 5.99, max_digits = 6, decimal_places = 2)
     total = models.DecimalField(default = 0.00, max_digits = 6, decimal_places = 2)
     active = models.BooleanField(default = True)
+    created = models.DateTimeField(auto_now_add = True)
 
     objects = OrderManager()
 
+    class Meta:
+        ordering = ('-created', 'order_id')
+
     def __str__(self):
         return self.order_id
+
+    def get_absolute_url(self):
+        return reverse('orders:detail', kwargs = {'order_id' : self.order_id})
+
+    def get_shipping_status(self):
+        if self.status == 'refunded':
+            return 'Refunded'
+        elif self.status == 'shipped':
+            return 'Shipped'
+        return 'Shipping Soon'
     
     class Meta:
         ordering = ('id',)

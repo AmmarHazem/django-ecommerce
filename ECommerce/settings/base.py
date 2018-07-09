@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+BASE_URL = '127.0.0.1:8000/'
+
 # ADMINS = [('Ammar', 'ammar.hazem@hotmail.com')]
 # MANAGERS = ADMINS
 
@@ -144,9 +146,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # @login_required decorator or LoginRequiredMixin will use this url if the user 
 # is not logged in passing the current absolute path as next parameter
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/account/login/'
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = LOGIN_URL
 
 
 MEDIA_URL = '/media/'

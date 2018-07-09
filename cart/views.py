@@ -33,6 +33,7 @@ class Cart_Home(ListView):
         context['products'] = cart.products.all()
         context['total'] = cart.order_set.all().first().total
         context['shipping'] = shipping
+        print(cart.is_digital)
         return context
 
 
@@ -94,7 +95,7 @@ class Checkout(View):
         cart, created = Cart.objects.new_or_get(request)
         if created:
             return redirect('cart:home')
-        login_form = LoginForm()
+        login_form = LoginForm(request)
         guest_form = GuestForm()
         shipping_form = AddressForm()
 

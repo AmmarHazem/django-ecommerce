@@ -51,6 +51,14 @@ class Cart(models.Model):
 
     objects = CartManager()
 
+    @property
+    def is_digital(self):
+        qs = self.products.all()
+        not_digital = qs.filter(is_digital = False)
+        if not_digital.exists():
+            return False
+        return True
+
     def __str__(self):
         if self.user:
             return str(self.user.email)

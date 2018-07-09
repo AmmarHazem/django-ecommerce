@@ -1,10 +1,29 @@
 from django import forms
+from django.shortcuts import redirect
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from django.contrib.auth import get_user_model
-from .models import Guest
+from django.contrib.auth import get_user_model, authenticate, login
+from django.contrib import messages
+from django.urls import reverse
+from django.utils.safestring import mark_safe
+from .models import Guest, EmailActivation
+from .signals import user_logged_in
 
 
 User = get_user_model()
+
+
+
+class ReactivateEmail(forms.Form):
+    email = forms.EmailField()
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        qs = EmailActivation.objects.email_exists(email)
+        if not qs.exists():
+            link = reverse('accounts:signup')
+            msg = ''' This Email does not exist, would you like to <a href="{link}">register</a> ? '''.format(link = link)
+            raise forms.ValidationError(mark_safe(msg))
+        return email
 
 
 class UserAdminCreationForm(forms.ModelForm):
@@ -43,7 +62,7 @@ class UserAdminChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('email', 'full_name', 'password', 'active', 'admin')
+        fields = ('email', 'full_name', 'password', 'is_active', 'admin')
 
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.
@@ -52,8 +71,55 @@ class UserAdminChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 class LoginForm(forms.Form):
-    username = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder' : 'Email'}))
-    password = forms.CharField(widget = forms.PasswordInput(attrs={'class': 'form-control', 'placeholder' : 'Password'}))
+    email = forms.EmailField(widget = forms.EmailInput(attrs = {'class' : 'form-control', 'placeholder' : 'Email'}))
+    password = forms.CharField(widget = forms.PasswordInput(attrs = {'class' : 'form-control', 'placeholder' : 'Password'}))
+
+    # override the default __init__() method of the Form class so we can 
+    # access the request object on the form
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super(LoginForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        request = self.request
+        cd  = self.cleaned_data
+
+        # check if this user has confirmed his email address or not
+        qs = User.objects.filter(email = cd['email'])
+        if qs.exists():
+            not_active = qs.filter(is_active = False)
+            if not_active.exists():
+                confirm_email = EmailActivation.objects.filter(email = cd['email'])
+                is_confirmable = confirm_email.confirmable().exists()
+                if is_confirmable:
+                    raise forms.ValidationError('Your Email has not been verified yet, Please check your Email')
+                email_confirm_exists = EmailActivation.objects.email_exists(email = cd['email']).exists()
+                if email_confirm_exists:
+                    raise forms.ValidationError('Please go here to verify your Email')
+                if not is_confirmable and not email_confirm_exists:
+                    raise forms.ValidationError('This account is inactive')
+
+        user = authenticate(request = request, username = cd['email'], password = cd['password'])
+        if user is None:
+            raise forms.ValidationError('Invalid credentials')
+        login(request, user)
+        self.user = user
+        user_logged_in.send(user.__class__, instance = user, request = request)
+        try:
+            del request.session['user_email']
+        except:
+            pass
+        return cd
+
+    # def form_valid(self, form):
+    #     request = self.request
+    #     cd = form.cleaned_data
+    #     user = authenticate(request = request, username = cd['email'], password = cd['password'])
+    #     if user:
+    #         login(request, user)
+    #         user_logged_in.send(user.__class__, instance = user, request = request)
+    #         return redirect('home')
+
 
 
 class GuestForm(forms.ModelForm):

@@ -1,12 +1,26 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sessions.models import Session
+from accounts.signals import user_logged_in
 from accounts.models import User
 from .signals import object_viewed_signal
 from .utils import get_client_ip
-from django.contrib.sessions.models import Session
-from django.db.models.signals import post_save
-from accounts.signals import user_logged_in
+
+
+class ObjectViewedQuerySet(models.query.QuerySet):
+    def by_model(self, model_class):
+        c_type = ContentType.objects.get_for_model(model_class)
+        return self.filter(content_type = c_type)
+
+
+class ObjectViewedManager(models.Manager):
+    def get_query_set(self):
+        return ObjectViewedQuerySet(self.model, using = self._db)
+
+    def by_model(self, model_class):
+        return self.get_query_set().by_model(model_class)
 
 
 class ObjectViewed(models.Model):
@@ -16,6 +30,8 @@ class ObjectViewed(models.Model):
     ip_address = models.CharField(max_length = 120, blank = True)
     content_object = GenericForeignKey('content_type', 'object_id')
     timestamp = models.DateTimeField(auto_now_add = True)
+
+    objects = ObjectViewedManager()
 
     def __str__(self):
         return '%s viewd at: %s' % (self.content_object, self.timestamp)

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}
+Edit Credentials
+{% endblock %}
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        {% include 'form.html' with form=form label='True' %}
+        <input type="text" name="email" value="{{ request.user.email }}" disabled>
+        <button type="submit" class="btn btn-outline-primary">Update</button>
+        <a href="{% url 'password:password_change' %}">Change password</a>
+    </form>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Guest
+from .models import User, Guest, EmailActivation
 from .forms import *
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -14,11 +14,11 @@ class UserAdmin(BaseUserAdmin):
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
     list_display = ('email', 'admin')
-    list_filter = ('admin', 'staff', 'active')
+    list_filter = ('admin', 'staff', 'is_active')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('full_name',)}),
-        ('Permissions', {'fields': ('admin',)}),
+        ('Permissions', {'fields': ('admin', 'is_active')}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -42,3 +42,5 @@ admin.site.unregister(Group)
 
 
 admin.site.register(Guest)
+
+admin.site.register(EmailActivation)

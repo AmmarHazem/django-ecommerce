@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Orders List{% endblock %}
+{% block content %}
+    <div class="col-12"><h2>Orders</h2><hr></div>
+    <table class="table col-12">
+        <thead><th>Order ID</th><th>Shipping Status</th><th>Total</th></thead>
+        {% for o in object_list %}
+            <tr>
+                <td><a href="{{ o.get_absolute_url }}">{{ o.order_id }}</a></td>
+                <td>{{ o.get_shipping_status }}</td>
+                <td>{{ o.total }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

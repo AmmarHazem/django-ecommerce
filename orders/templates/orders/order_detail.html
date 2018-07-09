@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Order{% endblock %}
+{% block content %}
+<div class="d-flex flex-column col-6 mx-auto mt-5">
+    <h2>Order {{ object.order_id }}</h2>
+    <p class="lead">Cart Items: {% for p in order.cart.products.all %}{{ p }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+    <p class="lead">
+        Shipping Address: {{ order.shipping_address.get_address }}
+    </p>
+    <p class="lead">
+        Billing Address: {{ order.billing_address.get_address }}
+    </p>
+    <p class="lead">Order ID: {{ order.order_id }}</p>
+    <p class="lead">Shipping: {{ order.shipping_total }}</p>
+    <p class="lead">Total: {{ order.total }}</p>
+</div>
+{% endblock %}

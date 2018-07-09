@@ -39,23 +39,34 @@
                         <a href="{% url 'contact:contact' %}" class="nav-link">Contact us</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'markting:prefrence' %}" class="nav-link">Markting Prefrence</a>
+                        
                     </li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="{% url 'logout' %}" class="nav-link">Logout</a>
-                    </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Account
+                            </a>
+                            <div class="dropdown-menu active" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'accounts:home' %}">Home</a>
+                                <a class="dropdown-item" href="#">Support</a>
+                                <a class="dropdown-item" href="#">Billing</a>
+                                <a class="dropdown-item" href="#">Configuration</a>
+                                <a href="{% url 'markting:prefrence' %}" class="dropdown-item">Markting Prefrence</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
+                            </div>
+                        </li>
                     {% endif %}
                 </ul>
                 {% if user.is_authenticated %}
-                <span class="navbar-text active mr-3">
-                    {{ user.get_short_name|default:user }}
-                </span>
-                {% include 'form.html' %}
+                    <span class="navbar-text active mr-3">
+                        {{ user.get_short_name|default:user }}
+                    </span>
+                    {% include 'search/form.html' %}
                 {% else %}
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a href="{% url 'login' %}" class="nav-link">Login</a>
+                        <a href="{% url 'accounts:login' %}" class="nav-link">Login</a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'accounts:signup' %}" class="nav-link">Signup</a>
@@ -68,8 +79,19 @@
 
     <!-- end navbar -->
 
+    {% if messages %}
+        <div class="alert alert-default">
+            {% for message in messages %}
+                <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                    {{ message }}
+                </span>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-    <main role="main" class="container text-center">
+
+    <main role="main" class="container">
         <div class="row d-flex justify-content-center py-5">
             {% block content %}
                 <div class="starter-template">

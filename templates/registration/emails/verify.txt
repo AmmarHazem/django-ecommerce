@@ -1,0 +1,11 @@
+Hello,
+
+Plaese activate your account for {{ email }} by clocking the link below:
+
+{{ path }}
+
+Once you activate you can shop and login.
+
+Thank you.
+
+eCommerce

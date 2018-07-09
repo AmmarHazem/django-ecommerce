@@ -20,6 +20,7 @@ class Product(models.Model):
     price = models.DecimalField(default = 0.00, max_digits = 6, decimal_places = 2)
     image = models.ImageField(upload_to = '', null = True, blank = True)
     slug = models.CharField(max_length = 50, null = True, blank = True)
+    is_digital = models.BooleanField(default = False)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
