@@ -152,7 +152,8 @@ LOGOUT_REDIRECT_URL = LOGIN_URL
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static_cdn', 'media')
+PROTECTED_ROOT = os.path.join(BASE_DIR, 'protected', 'media')
 
 # stripe credentials
 PUB_KEY = 'pk_test_VXDkskRFeTYvKtSLl5dNMmkf'

@@ -19,6 +19,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.views.generic import RedirectView
 from .views import *
+from orders.views import Library
 
 
 urlpatterns = [
@@ -30,6 +31,7 @@ urlpatterns = [
     url(r'^account/', include('accounts.urls', namespace = 'accounts')),
     url(r'^account/', include('accounts.passwords.urls', namespace = 'password')),
     url(r'^settings/', include('markting.urls')),
+    url(r'^library/$', Library.as_view(), name = 'library'),
     url(r'^orders/', include('orders.urls')),
     url(r'^billing/', include('billing.urls')),
     url(r'^accounts/', include('django.contrib.auth.urls')),

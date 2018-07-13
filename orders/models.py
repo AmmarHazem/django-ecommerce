@@ -1,9 +1,13 @@
 from django.db import models
 from django.urls import reverse
 from cart.models import Cart
+from django.contrib.auth import get_user_model
 from decimal import Decimal
 from billing.models import BillingProfile
 from address.models import Address
+from product.models import Product
+
+User = get_user_model()
 
 
 class OrderQuerySet(models.query.QuerySet):
@@ -69,9 +73,6 @@ class Order(models.Model):
         elif self.status == 'shipped':
             return 'Shipped'
         return 'Shipping Soon'
-    
-    class Meta:
-        ordering = ('id',)
 
     def update_total(self):
         cart_total = self.cart.total
@@ -82,16 +83,76 @@ class Order(models.Model):
         self.save()
 
     def check_done(self):
-        bp = self.billing_profile
-        ba = self.billing_address
-        sa = self.shipping_address
+        shipping_address_required = self.cart.is_digital
+        shipping_done = False
+        if shipping_address_required and self.shipping_address:
+            shipping_done = True
+        elif shipping_address_required and not self.shipping_address:
+            shipping_done = False
+        else:
+            shipping_done = True
+        billing_profile = self.billing_profile
+        billing_address = self.billing_address
         total = self.total
-        if bp and ba and sa and total:
+        if billing_profile and billing_address and shipping_done and total:
             return True
         return False
+
+    def update_purchases(self):
+        for p in self.cart.products.all():
+            obj, created = ProductPurchase.objects.get_or_create(order_id = self.order_id, product = p, billing_profile = self.billing_profile)
+            print('created', created)
+        return ProductPurchase.objects.filter(order_id = self.order_id).count()
 
     def mark_paid(self):
         if self.check_done():
             self.status = 'paid'
+            self.update_purchases()
             self.save()
         return self.status
+
+
+class ProductPurchaseQuerySet(models.query.QuerySet):
+    def active(self):
+        return self.filter(refunded = False)
+
+    def digital(self):
+        return self.filter(product__is_digital = True)
+
+    def by_request(self, request):
+        bp, created = BillingProfile.objects.new_or_get(request)
+        return self.filter(billing_profile = bp)
+
+
+class ProductPurchaseManager(models.Manager):
+    def get_queryset(self):
+        return ProductPurchaseQuerySet(self.model, using = self._db)
+
+    def all(self):
+        return self.get_queryset().filter(refunded = False)
+
+    def library(self):
+        return self.get_queryset().active().digital()
+
+    def by_request(self, request):
+        return self.get_queryset().by_request(request)
+
+    def products_by_request(self, request):
+        qs = self.by_request(request).digital()
+        ids = [p.product.id for p in qs]
+        products = Product.objects.filter(id__in = ids)
+        return products
+
+
+class ProductPurchase(models.Model):
+    order_id = models.CharField(max_length = 120, blank = True)
+    billing_profile = models.ForeignKey(BillingProfile, blank = True, null = True, on_delete = models.SET_NULL)
+    product = models.ForeignKey(Product, blank = True, null = True, on_delete = models.SET_NULL)
+    refunded = models.BooleanField(default = False)
+    updated = models.DateTimeField(auto_now= True)
+    created = models.DateTimeField(auto_now_add = True)
+
+    def __str__(self):
+        return self.product.name
+
+    objects = ProductPurchaseManager()

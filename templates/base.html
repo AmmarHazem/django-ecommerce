@@ -48,6 +48,7 @@
                             </a>
                             <div class="dropdown-menu active" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{% url 'accounts:home' %}">Home</a>
+                                <a class="dropdown-item" href="{% url 'library' %}">library</a>
                                 <a class="dropdown-item" href="#">Support</a>
                                 <a class="dropdown-item" href="#">Billing</a>
                                 <a class="dropdown-item" href="#">Configuration</a>
@@ -83,7 +84,6 @@
         <div class="alert alert-default">
             {% for message in messages %}
                 <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
                     {{ message }}
                 </span>
             {% endfor %}
@@ -96,7 +96,7 @@
             {% block content %}
                 <div class="starter-template">
                     <h1>My E-Commerce Website</h1>
-                    <p class="lead">This awesome website is my first E-Commerce website and it's going to be awesome and I'm going to make a lots of mony.</p>
+                    <p class="lead">This awesome website is my first E-Commerce website and I'm going to make a lots of mony.</p>
                 </div>
             {% endblock %}
         </div>

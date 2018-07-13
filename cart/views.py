@@ -98,6 +98,7 @@ class Checkout(View):
         login_form = LoginForm(request)
         guest_form = GuestForm()
         shipping_form = AddressForm()
+        shipping_address_required = not cart.is_digital
 
         if not request.user.is_authenticated() and not user_email:
             bp, created = BillingProfile.objects.new_or_get(request)
@@ -112,7 +113,7 @@ class Checkout(View):
             addresses = self.get_addr(bp)
             order, created = Order.objects.new_or_get(bp, cart)
             self.set_billing_data(order)
-            return render(request, 'checkout.html', {'order' : order, 'billing_profile' : bp, 'shipping_form' : shipping_form, 'addresses' : addresses, 'has_card' : has_card, 'publish_key' : STRIPE_PUB_KEY})
+            return render(request, 'checkout.html', {'order' : order, 'billing_profile' : bp, 'shipping_form' : shipping_form, 'addresses' : addresses, 'has_card' : has_card, 'publish_key' : STRIPE_PUB_KEY, 'shipping_address_required' : shipping_address_required})
 
         elif request.user.is_authenticated():
             bp, created = BillingProfile.objects.new_or_get(request)
@@ -120,7 +121,7 @@ class Checkout(View):
             addresses = self.get_addr(bp)
             order, created = Order.objects.new_or_get(bp, cart)
             self.set_billing_data(order)
-            return render(request, 'checkout.html', {'order' : order, 'billing_profile' : bp, 'shipping_form' : shipping_form, 'addresses' : addresses, 'has_card' : has_card, 'publish_key' : STRIPE_PUB_KEY})
+            return render(request, 'checkout.html', {'order' : order, 'billing_profile' : bp, 'shipping_form' : shipping_form, 'addresses' : addresses, 'has_card' : has_card, 'publish_key' : STRIPE_PUB_KEY, 'shipping_address_required' : shipping_address_required})
 
     def post(self, request):
         bp, created = BillingProfile.objects.new_or_get(request)

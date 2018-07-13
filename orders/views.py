@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.http import Http404
 from django.views.generic import ListView, DetailView
-from .models import Order
+from .models import Order, ProductPurchase
 
 
 class OrdersList(LoginRequiredMixin, ListView):
@@ -22,3 +22,10 @@ class OrderDetail(LoginRequiredMixin, DetailView):
         if orders.count() == 1:
             return orders.first()
         return Http404
+
+
+class Library(LoginRequiredMixin, ListView):
+    template_name = 'orders/library.html'
+    def get_queryset(self):
+        products = ProductPurchase.objects.products_by_request(self.request)
+        return products

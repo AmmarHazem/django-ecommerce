@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="col-4 mt-4 product">
-    <img src="{{ product.image.url }}">
-</div>
-<div class="col-8 mt-4">
+{% if product.image %}
+    <div class="col mt-4 product">
+        <img src="{{ product.image.url }}">
+    </div>
+{% endif %}
+<div class="col mt-4">
     <p class="col">{{ product.name }}</p>
     <p class="col">{{ product.description }}</p>
     <p class="col">{{ product.price }}</p>

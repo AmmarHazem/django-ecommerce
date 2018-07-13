@@ -1,7 +1,10 @@
 from django.db import models
 from django.template.defaultfilters import slugify
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 from django.db.models import Q
+from ECommerce.utils import get_filename
 
 class ProductManager(models.Manager):
 
@@ -23,7 +26,8 @@ class Product(models.Model):
     is_digital = models.BooleanField(default = False)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        if not self.slug:
+            self.slug = slugify(self.name)
         super(Product, self).save(*args, **kwargs)
 
     objects = ProductManager()
@@ -31,10 +35,40 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse_lazy('product:detail', args = (self.slug,))
 
+    def get_downloads(self):
+        return self.productfile_set.all()
+
     def __str__(self):
         return self.name
 
     class Mete:
         ordering = ('name',)
         permissions = (('can_view_products', 'Can view products'),)
+
+
+def product_file_loc(instance, filename):
+    if not instance.product.slug:
+        instance.slug = slugify(instance.name)
+    location = 'products/{}/'.format(instance.product.slug)
+    return location + filename
+
+
+class ProductFile(models.Model):
+    product = models.ForeignKey(Product, on_delete = models.CASCADE)
+    file = models.FileField(upload_to = product_file_loc, storage = FileSystemStorage(location = settings.PROTECTED_ROOT))
+    free = models.BooleanField(default = False)
+    user_required = models.BooleanField(default = False)
+
+    def __str__(self):
+        return str(self.file.name)
+
+    def get_download_url(self):
+        return reverse('product:download', kwargs = {'slug' : self.product.slug, 'pk' : self.id})
+
+    @property
+    def name(self):
+        return get_filename(self.file.name)
+
+    def get_default_url(self):
+        return self.product.get_absolute_url()
 

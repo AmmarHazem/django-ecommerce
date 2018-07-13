@@ -1,6 +1,9 @@
 import string
 from random import choice, randint
+import os
 
+def get_filename(path):
+    return os.path.basename(path)
 
 def rand_string(size = 10, chars = string.ascii_lowercase + string.digits):
     return ''.join(choice(chars) for i in range(size))
