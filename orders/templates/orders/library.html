@@ -9,7 +9,7 @@
                 <td><a href="#">{{ p.name }}</a></td>
                 <td>
                     {% for d in p.get_downloads %}
-                        <a href="{{ d.get_download_url }}">{{ d.name }}</a>
+                        <a href="{{ d.get_download_url }}">{{ d.name }}</a><br>
                     {% endfor %}
                 </td>
             </tr>

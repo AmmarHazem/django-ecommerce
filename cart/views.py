@@ -33,7 +33,6 @@ class Cart_Home(ListView):
         context['products'] = cart.products.all()
         context['total'] = cart.order_set.all().first().total
         context['shipping'] = shipping
-        print(cart.is_digital)
         return context
 
 

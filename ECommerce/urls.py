@@ -20,11 +20,14 @@ from django.conf import settings
 from django.views.generic import RedirectView
 from .views import *
 from orders.views import Library
+from analytics.views import Sales, SalesAjax
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', Home.as_view(), name = 'home'),
+    url(r'^analytics/sales/$', Sales.as_view(), name = 'sales'),
+    url(r'^analytics/sales/data/$', SalesAjax.as_view(), name = 'sales-data'),
     url(r'^cart/', include('cart.urls')),
     # redirects the url accounts/ to account/
     # url(r'^accounts/', RedirectView.as_view(url = '/account')),

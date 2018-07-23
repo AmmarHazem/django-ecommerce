@@ -6,6 +6,19 @@
         <h5 class="card-title">{{ obj.name }}</h5>
         <p class="card-text">{{ obj.description }}</p>
         <p class="card-text">{{ obj.price }}</p>
-        <a href="{{ obj.get_absolute_url }}" class="btn btn-primary">Details</a>
+        <a href="{{ obj.get_absolute_url }}" class="btn btn-primary mb-3 btn-block">Details</a>
+        <form method="POST" action="/cart/update/" data-endpoint="/cart/update/" class="addRemoveProduct text-center" {% if request.user.is_authenticated %}data-user="true"{% endif %} novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ obj.id }}" {% if obj.is_digital %}data-is-digital="true"{% endif %}>
+            <input type="hidden" name="slug" value="{{ obj.slug }}">
+            <input type="hidden" name="next" value="1">
+            <span class="submit-span">
+            {% if obj in cart.products.all %}
+                <button type="submit" class="btn btn-link btn-block">Remove form Cart</button>
+            {% else %}
+                <button type="submit" class="btn btn-success btn-block">Add to Cart</button>
+            {% endif %}
+            </span>
+        </form>
     </div>
 </div>

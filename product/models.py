@@ -4,7 +4,11 @@ from django.urls import reverse_lazy, reverse
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.db.models import Q
+from ECommerce.aws.utils import ProtectedS3BotoStorage
+from ECommerce.aws.download.utils import AWSDownload
 from ECommerce.utils import get_filename
+
+import os
 
 class ProductManager(models.Manager):
 
@@ -47,28 +51,58 @@ class Product(models.Model):
 
 
 def product_file_loc(instance, filename):
-    if not instance.product.slug:
+    slug = instance.slug
+    id_ = instance.id
+    print(instance.id)
+    if id_ is None:
+        klass = instance.__class__
+        qs = klass.objects.order_by('-id')
+        if qs.exists():
+            id_ = qs.first().id + 1
+        else:
+            id_ = 0
+    if not slug:
         instance.slug = slugify(instance.name)
     location = 'products/{}/'.format(instance.product.slug)
     return location + filename
 
 
+# FileSystemStorage(location = settings.PROTECTED_ROOT)
 class ProductFile(models.Model):
     product = models.ForeignKey(Product, on_delete = models.CASCADE)
-    file = models.FileField(upload_to = product_file_loc, storage = FileSystemStorage(location = settings.PROTECTED_ROOT))
+    file = models.FileField(upload_to = product_file_loc, storage = ProtectedS3BotoStorage())
+    name = models.CharField(max_length = 120, blank = True)
     free = models.BooleanField(default = False)
     user_required = models.BooleanField(default = False)
+    created = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
         return str(self.file.name)
+
+    class Meta:
+        ordering = ('name', '-created')
 
     def get_download_url(self):
         return reverse('product:download', kwargs = {'slug' : self.product.slug, 'pk' : self.id})
 
     @property
-    def name(self):
-        return get_filename(self.file.name)
+    def get_name(self):
+        original_name = get_filename(self.file.name)
+        if self.name:
+            return self.name
+        return original_name
 
     def get_default_url(self):
         return self.product.get_absolute_url()
+
+    def generate_download_url(self):
+        bucket = getattr(settings, 'AWS_STORAGE_BUCKET_NAME')
+        region = getattr(settings, 'S3DIRECT_REGION')
+        access_key = getattr(settings, 'AWS_ACCESS_KEY_ID')
+        secret_key = getattr(settings, 'AWS_SECRET_ACCESS_KEY')
+        PROTECTED_DIR_NAME = getattr(settings, 'PROTECTED_DIR_NAME')
+        path = '{base}/{file_path}'.format(base = PROTECTED_DIR_NAME, file_path = str(self.file))
+        aws_dl_object =  AWSDownload(access_key, secret_key, bucket, region)
+        file_url = aws_dl_object.generate_url(path, new_filename=self.get_name)
+        return file_url
 

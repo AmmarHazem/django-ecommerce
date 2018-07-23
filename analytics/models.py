@@ -79,7 +79,6 @@ class UserSession(models.Model):
 
 
 def post_save_session(sender, instance, created, *args, **kwargs):
-    print(instance)
     if created:
         qs = UserSession.objects.filter(user = instance.user).exclude(id = instance.id)
         if qs.exists:

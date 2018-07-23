@@ -153,7 +153,7 @@ LOGOUT_REDIRECT_URL = LOGIN_URL
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static_cdn', 'media')
-PROTECTED_ROOT = os.path.join(BASE_DIR, 'protected', 'media')
+PROTECTED_ROOT = os.path.join(BASE_DIR, 'static_cdn', 'protected_media')
 
 # stripe credentials
 PUB_KEY = 'pk_test_VXDkskRFeTYvKtSLl5dNMmkf'
@@ -174,3 +174,5 @@ MAILCHIMP_EMAIL_LIST_ID     = '2d46e0117d'
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
 # DEFAULT_FROM_EMAIL = 'eCommerce: %s' % EMAIL_HOST_USER
+
+# from ECommerce.aws.conf import *

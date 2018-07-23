@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, View
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
 
 from mimetypes import guess_type
@@ -38,28 +38,36 @@ class ProductDownload(View):
             messages.error(request, 'You have to purchase this product to download it.')
             return redirect(file_.get_default_url())
 
-        file_root = settings.PROTECTED_ROOT
-        file_path = file_.file.path
-        path = os.path.join(file_root, file_path)
-        with open(file_path, 'rb') as f:
-            # FileWrapper converts a file like object to an iterator
-            wrapper = FileWrapper(f)
-            mimetype = 'application/force-download'
-            # guss the mime type of the file
-            gussed_type = guess_type(file_path)[0]
-            if gussed_type:
-                mimetype = gussed_type
-            response = HttpResponse(wrapper, content_type = mimetype)
-            response['Content-Disposition'] = 'attachment;filename=%s' % (file_.name)
-            response['X-SendFile'] = str(file_.name)
-            return response
-        return HttpResponse(file_.get_download_url())
+        aws_filepath = file_.generate_download_url()
+        return HttpResponseRedirect(aws_filepath)
+
+        # file_root = settings.PROTECTED_ROOT
+        # file_path = file_.file.path
+        # path = os.path.join(file_root, file_path)
+        # with open(file_path, 'rb') as f:
+        #     # FileWrapper converts a file like object to an iterator
+        #     wrapper = FileWrapper(f)
+        #     mimetype = 'application/force-download'
+        #     # guss the mime type of the file
+        #     gussed_type = guess_type(file_path)[0]
+        #     if gussed_type:
+        #         mimetype = gussed_type
+        #     response = HttpResponse(wrapper, content_type = mimetype)
+        #     response['Content-Disposition'] = 'attachment;filename=%s' % (file_.name)
+        #     response['X-SendFile'] = str(file_.name)
+        #     return response
+        # return HttpResponse(file_.get_download_url())
 
 class ProductList(ListView):
     model = Product
     template_name = 'products.html'
     context_object_name = 'products'
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProductList, self).get_context_data(*args, **kwargs)
+        cart, created = Cart.objects.new_or_get(self.request)
+        context['cart'] = cart
+        return context
 
 class UserProductHistoryList(LoginRequiredMixin, ListView):
     model = Product

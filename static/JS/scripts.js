@@ -2,7 +2,49 @@ $(window).ready(function(){
 
 
     // cart form
+
+    function getOwenedProducts(id, submitSpan){
+        var action = '/orders/endpoint/verify/ownership/';
+        var method = 'GET';
+        data = {'id' : id};
+        var Owner;
+        console.log('AJAX');
+        $.ajax({
+            url : action,
+            method : method,
+            data : data,
+            success : function(data){
+                if (data.owner){
+                    Owner = true;
+                    submitSpan.html('<a class="btn btn-link" href="/library/">In library</a>');
+                }
+                else{
+                    owner = false;
+                }
+            },
+            error : function(error){
+                Owner = false;
+                console.log(error);
+            }
+        })
+    }
+
     var productForm = $('.addRemoveProduct');
+
+    $.each(productForm, function(index, value){
+        var $this = $(this);
+        var isUser = $this.attr('data-user');
+        var submitSpan = $this.find('.submit-span');
+        var productInput = $this.find('[name="id"]');
+        var productID = productInput.attr('value');
+        var isDigital = productInput.attr('data-is-digital');
+        console.log('is digital: ', isDigital);
+        console.log('is user: ', isUser);
+        if ( isDigital && isUser ){
+            getOwenedProducts(productID, submitSpan);
+        }
+    });
+
     productForm.submit(function(event){
         event.preventDefault();
         var $this = $(this);
@@ -20,7 +62,7 @@ $(window).ready(function(){
                     submitSpan.html('<button type="submit" class="btn btn-link">Remove form Cart</button>');
                 }
                 else{
-                    submitSpan.html('<button type="submit" class="btn btn-success">Add to Cart</button>');
+                    submitSpan.html('<button type="submit" class="btn btn-success btn-block">Add to Cart</button>');
                 }
                 if (data.n > 0){
                     $('#n').text(data.n);

@@ -1,5 +1,8 @@
 from django.db import models
+from django.db.models import Sum, Avg, Count
 from django.urls import reverse
+from django.utils import timezone
+import datetime
 from cart.models import Cart
 from django.contrib.auth import get_user_model
 from decimal import Decimal
@@ -11,6 +14,28 @@ User = get_user_model()
 
 
 class OrderQuerySet(models.query.QuerySet):
+
+    def by_range(self, start_date, end_date = None):
+        if end_date is None:
+            return self.filter(updated__gte = start_date)
+        return self.filter(updated__gte = start_date).filter(updated__lte = end_date)
+
+    def by_date(self):
+        now = timezone.now() - datetime.timedelta(days = 30)
+        return self.filter(updated__month__gte = now.month)
+
+    def totals_data(self):
+        return self.aggregate(Sum('total'), Avg('total'))
+
+    def cart_data(self):
+        return self.aggregate(Sum('cart__products__price'), Avg('cart__products__price'), products = Count('cart__products'))
+
+    def not_refunded(self):
+        return self.exclude(status = 'refunded')
+
+    def by_status(self, status = 'shipped'):
+        return self.filter(status = status)
+
     def by_request(self, request):
         bp, created = BillingProfile.objects.new_or_get(request)
         return self.filter(billing_profile = bp)
@@ -54,12 +79,13 @@ class Order(models.Model):
     shipping_total = models.DecimalField(default = 5.99, max_digits = 6, decimal_places = 2)
     total = models.DecimalField(default = 0.00, max_digits = 6, decimal_places = 2)
     active = models.BooleanField(default = True)
+    updated = models.DateTimeField(auto_now = True)
     created = models.DateTimeField(auto_now_add = True)
 
     objects = OrderManager()
 
     class Meta:
-        ordering = ('-created', 'order_id')
+        ordering = ('-updated', '-created')
 
     def __str__(self):
         return self.order_id
@@ -101,7 +127,6 @@ class Order(models.Model):
     def update_purchases(self):
         for p in self.cart.products.all():
             obj, created = ProductPurchase.objects.get_or_create(order_id = self.order_id, product = p, billing_profile = self.billing_profile)
-            print('created', created)
         return ProductPurchase.objects.filter(order_id = self.order_id).count()
 
     def mark_paid(self):
@@ -137,9 +162,13 @@ class ProductPurchaseManager(models.Manager):
     def by_request(self, request):
         return self.get_queryset().by_request(request)
 
-    def products_by_request(self, request):
+    def products_by_id(self, request):
         qs = self.by_request(request).digital()
         ids = [p.product.id for p in qs]
+        return ids
+
+    def products_by_request(self, request):
+        ids = self.products_by_id(request)
         products = Product.objects.filter(id__in = ids)
         return products
 

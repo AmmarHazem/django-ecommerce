@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Analytic Data
+{% endblock %}
+{% block content %}
+    <div class="col-6">
+        <h2>Last day's sales</h2>
+        <hr>
+        <p class="lead">last day's Orders <strong>Total: {{ recent_orders_total.total__sum }}</strong></p>
+        {% for o in last_day_orders %}
+            <p><strong>Order ID: </strong>{{o.order_id}} - {{ o.created|timesince }}</p>
+            <p><strong>Billing Profile: </strong>{{o.billing_profile}}</p>
+            <p><strong>Total: </strong>{{o.total}}</p>
+            <hr>
+        {% endfor %}
+        <hr>
+        <h2 class="mt-4">Last two weeks's sales</h2>
+        <hr>
+        <p class="lead">Last two week's Orders <strong>Total: {{ recent_orders_total.total__sum }}</strong></p>
+        {% for o in last_two_weeks_orders %}
+            <p><strong>Order ID: </strong>{{o.order_id}} - {{ o.created|timesince }}</p>
+            <p><strong>Billing Profile: </strong>{{o.billing_profile}}</p>
+            <p><strong>Total: </strong>{{o.total}}</p>
+            <hr>
+        {% endfor %}
+    </div>
+    <div class="col-6">
+        <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+{% endblock %}
+
+{% block js %}
+{% include 'scripts.html' %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+<script src="{% static 'JS/sales.js' %}"></script>
+{% endblock %}
