@@ -29,8 +29,8 @@ ALLOWED_HOSTS = []
 
 BASE_URL = '127.0.0.1:8000/'
 
-# ADMINS = [('Ammar', 'ammar.hazem@hotmail.com')]
-# MANAGERS = ADMINS
+ADMINS = [('Ammar', 'ammar.hazem@hotmail.com')]
+MANAGERS = ADMINS
 
 
 # Application definition
@@ -168,11 +168,11 @@ MAILCHIMP_EMAIL_LIST_ID     = '2d46e0117d'
 
 # gmail email
 
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'ammar.hazem0@gmail.com' 
-# EMAIL_HOST_PASSWORD = ''
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = 'eCommerce: %s' % EMAIL_HOST_USER
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'ammar.hazem0@gmail.com' 
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'eCommerce: %s' % EMAIL_HOST_USER
 
-# from ECommerce.aws.conf import *
+from ECommerce.aws.conf import *
