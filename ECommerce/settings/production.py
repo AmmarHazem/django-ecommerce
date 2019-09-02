@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = '3lc^8jhq&v#=fi01gm78b)1ex_ntb$00!p3d0ry1_q)*a13n@+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -157,14 +157,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static_cdn', 'media')
 PROTECTED_ROOT = os.path.join(BASE_DIR, 'static_cdn', 'protected_media')
 
 # stripe credentials
-PUB_KEY = config('PUB_KEY')
-STRIPE_API_KEY = config('STRIPE_API_KEY')
+# PUB_KEY = config('PUB_KEY')
+# STRIPE_API_KEY = config('STRIPE_API_KEY')
 
 
 # mailchimp credentials
-MAILCHIMP_API_KEY           = config('MAILCHIMP_API_KEY')
-MAILCHIMP_DATA_CENTER       = 'us18'
-MAILCHIMP_EMAIL_LIST_ID     = '2d46e0117d'
+# MAILCHIMP_API_KEY           = config('MAILCHIMP_API_KEY')
+# MAILCHIMP_DATA_CENTER       = 'us18'
+# MAILCHIMP_EMAIL_LIST_ID     = '2d46e0117d'
 
 
 CORS_REPLACE_HTTPS_REFERER      = True
@@ -177,7 +177,7 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS  = True
 SECURE_HSTS_SECONDS             = 1000000
 SECURE_FRAME_DENY               = True
 
-from ECommerce.aws.conf import *
+# from ECommerce.aws.conf import *
 
 
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')

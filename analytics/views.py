@@ -45,7 +45,6 @@ class Sales(LoginRequiredMixin, TemplateView):
         context = super(Sales, self).get_context_data(*args, *kwargs)
         one_day = timezone.now() - datetime.timedelta(days = 1)
         last_two_weeks = timezone.now() - datetime.timedelta(days = 30)
-        print(timezone.now().date())
         qs = Order.objects.all()
         last_day_orders = qs.by_range(start_date = one_day)
         last_two_weeks_orders = qs.by_range(start_date = last_two_weeks)

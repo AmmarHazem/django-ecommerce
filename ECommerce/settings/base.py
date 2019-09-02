@@ -175,4 +175,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'eCommerce: %s' % EMAIL_HOST_USER
 
-from ECommerce.aws.conf import *
+# from ECommerce.aws.conf import *
